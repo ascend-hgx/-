@@ -20,51 +20,54 @@ public:
     BinaryTree() {
         Node = nullptr;
     }
-    void PreInsertOrder(int data) {
-        PreInsertOrder(Node, data);
+    void PreInsertNode(int data) {
+        PreInsertNode(Node, data);
     }
-    void PreOrder(bool output = false) {
+    void PreNode(bool output = false) {
         List.clear();
-        PreOrder(Node, output);
+        PreNode(Node, output);
     }
-    void InOrder(bool output = false) {
+    void InNode(bool output = false) {
         List.clear();
-        InOrder(Node, output);
+        InNode(Node, output);
     }
-    void PostOrder(bool output = false) {
+    void PostNode(bool output = false) {
         List.clear();
-        PostOrder(Node, output);
+        PostNode(Node, output);
+    }
+    void DeleteNode(int key) {
+        DeleteNode(Node, key);
     }
 
     // 前序遍历，递归
-    void PreOrder(TreeNode* root, bool output = false) {
+    void PreNode(TreeNode* root, bool output = false) {
         if (root == nullptr)
             return;
         if (output)
             cout << root->val << " ";
         else
             List.push_back(root);
-        PreOrder(root->left, output);
-        PreOrder(root->right, output);
+        PreNode(root->left, output);
+        PreNode(root->right, output);
     }
 
     // 中序遍历，递归
-    void InOrder(TreeNode* root, bool output = false) {
+    void InNode(TreeNode* root, bool output = false) {
         if (root == nullptr)
             return;
-        InOrder(root->left, output);
+        InNode(root->left, output);
         if (output)
             cout << root->val << " ";
         else
             List.push_back(root);
-        InOrder(root->right, output);
+        InNode(root->right, output);
     }
 
     // 后序遍历，递归
-    void PostOrder(TreeNode* root, bool output = false) {
+    void PostNode(TreeNode* root, bool output = false) {
         if (root != nullptr) {
-            PostOrder(root->left, output);
-            PostOrder(root->right, output);
+            PostNode(root->left, output);
+            PostNode(root->right, output);
             if (output)
                 cout << root->val << " ";
             else
@@ -73,7 +76,7 @@ public:
     }
 
     // 先序插入二叉树
-    void PreInsertOrder(TreeNode* &root, int data) {
+    void PreInsertNode(TreeNode* &root, int data) {
         if (root == nullptr) {
             root = new TreeNode(data);
             /*root = (TreeNode*)malloc(sizeof(TreeNode));     // new TreeNode(data);
@@ -83,38 +86,50 @@ public:
             return;
         }
         if (data < root->val)
-            PreInsertOrder(root->left, data);
+            PreInsertNode(root->left, data);
         else
-            PreInsertOrder(root->right, data);
+            PreInsertNode(root->right, data);
     }
 
     // 通过先序遍历删除对应参数
-    bool DeleteOrder(TreeNode* root, int data) {
-        if (root == nullptr)
-            return false;
-        if (root->val == data) {
-
-            return true;
+    TreeNode* DeleteNode(TreeNode* root, int key) {
+        if (!root)
+            return nullptr;
+        if (root->val == key) {
+            if (root->left) {
+                TreeNode* node = root->left;
+                while (node->right) // 从删除结点的左节点开始往右找，找到右边为空的来替换原来的位置（取左边最大值替换）
+                    node = node->right;
+                node->right = root->right;
+                return root->left;
+            }
+            return root->right;
         }
-        if (DeleteOrder(root->left, data))
-            return true;
-        if(DeleteOrder(root->right, data))
-            return true;
+        if (root->val > key)
+            root->left = DeleteNode(root->left, key);
+        else
+            root->right = DeleteNode(root->right, key);
+        return root;
     }
 };
 
 int main()
 {
     BinaryTree binaryTree;
-    binaryTree.PreInsertOrder(3);
-    binaryTree.PreInsertOrder(1);
-    binaryTree.PreInsertOrder(2);
-    binaryTree.PreInsertOrder(5);
-    binaryTree.PreOrder(true);
+    binaryTree.PreInsertNode(5);
+    binaryTree.PreInsertNode(3);
+    binaryTree.PreInsertNode(6);
+    binaryTree.PreInsertNode(4);
+    binaryTree.PreInsertNode(2);
+    binaryTree.PreInsertNode(7);
+    binaryTree.PreNode(true);
     cout << endl;
-    binaryTree.InOrder(true);
+    binaryTree.InNode(true);
     cout << endl;
-    binaryTree.PostOrder(false);
+    binaryTree.PostNode(false);
     for (int i = 0; i < binaryTree.List.size(); i++)
         cout << binaryTree.List[i]->val << " ";
+    cout << endl;
+    binaryTree.DeleteNode(5);
+    binaryTree.InNode(true);
 }
