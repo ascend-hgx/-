@@ -23,30 +23,35 @@ public:
     void PreInsertNode(int data) {
         PreInsertNode(Node, data);
     }
-    void PreNode(bool output = false) {
+    vector<TreeNode*> PreNode(bool output = false) {
         List.clear();
         PreNode(Node, output);
+        return List;
     }
-    void InNode(bool output = false) {
+    vector<TreeNode*> InNode(bool output = false) {
         List.clear();
         InNode(Node, output);
+        return List;
     }
-    void PostNode(bool output = false) {
+    vector<TreeNode*> PostNode(bool output = false) {
         List.clear();
         PostNode(Node, output);
+        return List;
     }
     // 删除后从左边找最右边的（比删除的小的）或者右边最左的（比删除的大的替换）
     void DeleteNode(int key) {
         if (Node == nullptr)
             return;
         TreeNode* keyNode = FindNode(Node, key);        // 要移出的点
+        if (keyNode == nullptr)
+            return;
         TreeNode* lastNode = keyNode;                   // 用于替换的上一个节点
         TreeNode* moveNode = keyNode;                   // 移动这个去替换
         if (keyNode->left) {
-            moveNode = MaxNode(keyNode->left, &lastNode);
+            moveNode = MaxNode(keyNode->left, &lastNode);   // 取左边最大值替换
             lastNode->right = nullptr;
         } else if (keyNode->right) {
-            moveNode = MinNode(keyNode->right, &lastNode);
+            moveNode = MinNode(keyNode->right, &lastNode);  // 取右边最小值替换
             lastNode->left = nullptr;
         }
         // 如果替换的是首地址，则需要替换
@@ -57,6 +62,7 @@ public:
         moveNode->left = keyNode->left;
         moveNode->right = keyNode->right;
         delete keyNode;
+        InNode();   // 刷新链表
     }
     int MinNode() {
         return MinNode(Node)->val;
@@ -117,29 +123,8 @@ public:
             PreInsertNode(root->right, data);
     }
 
-    // 通过先序遍历删除对应参数，这个删除头会有bug，于是仅供参考
-    TreeNode* DeleteNode(TreeNode* root, int key) {
-        if (!root)
-            return nullptr;
-        if (root->val == key) {
-            if (root->left) {
-                TreeNode* node = root->left;
-                while (node->right) // 从删除结点的左节点开始往右找，找到右边为空的来替换原来的位置（取左边最大值替换）
-                    node = node->right;
-                node->right = root->right;
-                return root->left;
-            }
-            return root->right;
-        }
-        if (root->val > key)
-            root->left = DeleteNode(root->left, key);
-        else
-            root->right = DeleteNode(root->right, key);
-        return root;
-    }
-
     TreeNode* FindNode(TreeNode* root, int key) {
-        if (root->val == key)
+        if (root == nullptr || root->val == key)
             return root;
         if (root->val > key) {
             return FindNode(root->left, key);
@@ -169,6 +154,27 @@ public:
             return node;
         *lastNode = node;
         return MaxNode(node->right);
+    }
+
+    // 通过先序遍历删除对应参数，这个删除头会有bug，于是仅供参考
+    TreeNode* DeleteNode(TreeNode* root, int key) {
+        if (!root)
+            return nullptr;
+        if (root->val == key) {
+            if (root->left) {
+                TreeNode* node = root->left;
+                while (node->right) // 从删除结点的左节点开始往右找，找到右边为空的来替换原来的位置（取左边最大值替换）
+                    node = node->right;
+                node->right = root->right;
+                return root->left;
+            }
+            return root->right;
+        }
+        if (root->val > key)
+            root->left = DeleteNode(root->left, key);
+        else
+            root->right = DeleteNode(root->right, key);
+        return root;
     }
 };
 int main()
