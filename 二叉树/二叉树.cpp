@@ -35,8 +35,34 @@ public:
         List.clear();
         PostNode(Node, output);
     }
+    // 删除后从左边找最右边的（比删除的小的）或者右边最左的（比删除的大的替换）
     void DeleteNode(int key) {
-        DeleteNode(Node, key);
+        if (Node == nullptr)
+            return;
+        TreeNode* keyNode = FindNode(Node, key);        // 要移出的点
+        TreeNode* lastNode = keyNode;                   // 用于替换的上一个节点
+        TreeNode* moveNode = keyNode;                   // 移动这个去替换
+        if (keyNode->left) {
+            moveNode = MaxNode(keyNode->left, &lastNode);
+            lastNode->right = nullptr;
+        } else if (keyNode->right) {
+            moveNode = MinNode(keyNode->right, &lastNode);
+            lastNode->left = nullptr;
+        }
+        // 如果替换的是首地址，则需要替换
+        if (keyNode == Node) {
+            Node = moveNode;
+        }
+
+        moveNode->left = keyNode->left;
+        moveNode->right = keyNode->right;
+        delete keyNode;
+    }
+    int MinNode() {
+        return MinNode(Node)->val;
+    }
+    int MaxNode() {
+        return MaxNode(Node)->val;
     }
 
     // 前序遍历，递归
@@ -91,7 +117,7 @@ public:
             PreInsertNode(root->right, data);
     }
 
-    // 通过先序遍历删除对应参数
+    // 通过先序遍历删除对应参数，这个删除头会有bug，于是仅供参考
     TreeNode* DeleteNode(TreeNode* root, int key) {
         if (!root)
             return nullptr;
@@ -111,8 +137,40 @@ public:
             root->right = DeleteNode(root->right, key);
         return root;
     }
-};
 
+    TreeNode* FindNode(TreeNode* root, int key) {
+        if (root->val == key)
+            return root;
+        if (root->val > key) {
+            return FindNode(root->left, key);
+        } else {
+            return FindNode(root->right, key);
+        }
+        return nullptr;
+    }
+    TreeNode* MinNode(TreeNode* node) {
+        if (node->left == nullptr && node->right == nullptr)
+            return node;
+        return MinNode(node->left);
+    }
+    TreeNode* MinNode(TreeNode* node, TreeNode** lastNode) {
+        if (node->left == nullptr && node->right == nullptr)
+            return node;
+        *lastNode = node;
+        return MinNode(node->left);
+    }
+    TreeNode* MaxNode(TreeNode* node) {
+        if (node->left == nullptr && node->right == nullptr)
+            return node;
+        return MaxNode(node->right);
+    }
+    TreeNode* MaxNode(TreeNode* node, TreeNode** lastNode) {
+        if (node->left == nullptr && node->right == nullptr)
+            return node;
+        *lastNode = node;
+        return MaxNode(node->right);
+    }
+};
 int main()
 {
     BinaryTree binaryTree;
@@ -122,6 +180,7 @@ int main()
     binaryTree.PreInsertNode(4);
     binaryTree.PreInsertNode(2);
     binaryTree.PreInsertNode(7);
+
     binaryTree.PreNode(true);
     cout << endl;
     binaryTree.InNode(true);
@@ -130,6 +189,8 @@ int main()
     for (int i = 0; i < binaryTree.List.size(); i++)
         cout << binaryTree.List[i]->val << " ";
     cout << endl;
+    cout << "Min " << binaryTree.MinNode() << endl;
+
     binaryTree.DeleteNode(5);
     binaryTree.InNode(true);
 }
