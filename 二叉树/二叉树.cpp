@@ -49,10 +49,10 @@ public:
         TreeNode* moveNode = keyNode;                   // 移动这个去替换
         if (keyNode->left) {
             moveNode = MaxNode(keyNode->left, &lastNode);   // 取左边最大值替换
-            lastNode->right = nullptr;
+            lastNode->right = moveNode->left;
         } else if (keyNode->right) {
             moveNode = MinNode(keyNode->right, &lastNode);  // 取右边最小值替换
-            lastNode->left = nullptr;
+            lastNode->left = moveNode->right;
         }
         // 如果替换的是首地址，则需要替换
         if (keyNode == Node) {
