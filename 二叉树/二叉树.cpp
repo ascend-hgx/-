@@ -114,7 +114,7 @@ public:
             /*root = (TreeNode*)malloc(sizeof(TreeNode));     // new TreeNode(data);
             root->val = data;
             root->left = nullptr;
-            root->right = nullptr;*/
+            root->right = nullptr; /**/
             return;
         }
         if (data < root->val)
@@ -134,23 +134,23 @@ public:
         return nullptr;
     }
     TreeNode* MinNode(TreeNode* node) {
-        if (node->left == nullptr && node->right == nullptr)
+        if (node->left == nullptr)
             return node;
         return MinNode(node->left);
     }
     TreeNode* MinNode(TreeNode* node, TreeNode** lastNode) {
-        if (node->left == nullptr && node->right == nullptr)
+        if (node->left == nullptr)
             return node;
         *lastNode = node;
         return MinNode(node->left);
     }
     TreeNode* MaxNode(TreeNode* node) {
-        if (node->left == nullptr && node->right == nullptr)
+        if (node->right == nullptr)
             return node;
         return MaxNode(node->right);
     }
     TreeNode* MaxNode(TreeNode* node, TreeNode** lastNode) {
-        if (node->left == nullptr && node->right == nullptr)
+        if (node->right == nullptr)
             return node;
         *lastNode = node;
         return MaxNode(node->right);
@@ -186,6 +186,11 @@ int main()
     binaryTree.PreInsertNode(4);
     binaryTree.PreInsertNode(2);
     binaryTree.PreInsertNode(7);
+    binaryTree.PreInsertNode(7);
+    binaryTree.PreInsertNode(7);
+    binaryTree.PreInsertNode(7);
+    binaryTree.PreInsertNode(7);
+    binaryTree.PreInsertNode(7);
 
     binaryTree.PreNode(true);
     cout << endl;
@@ -197,6 +202,6 @@ int main()
     cout << endl;
     cout << "Min " << binaryTree.MinNode() << endl;
 
-    binaryTree.DeleteNode(5);
+    binaryTree.DeleteNode(7);
     binaryTree.InNode(true);
 }
