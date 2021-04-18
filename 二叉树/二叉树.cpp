@@ -50,19 +50,20 @@ public:
         if (keyNode->left) {
             moveNode = MaxNode(keyNode->left, &lastNode);   // 取左边最大值替换
             lastNode->right = moveNode->left;
+            lastNode->left = nullptr;
         } else if (keyNode->right) {
             moveNode = MinNode(keyNode->right, &lastNode);  // 取右边最小值替换
             lastNode->left = moveNode->right;
+            lastNode->right = nullptr;
         }
         // 如果替换的是首地址，则需要替换
         if (keyNode == Node) {
             Node = moveNode;
         }
 
-        moveNode->left = keyNode->left;
-        moveNode->right = keyNode->right;
-        delete keyNode;
-        InNode();   // 刷新链表
+        keyNode->val = moveNode->val;
+        delete moveNode;
+        InNode(false);   // 刷新链表
     }
     int MinNode() {
         return MinNode(Node)->val;
@@ -201,7 +202,6 @@ int main()
         cout << binaryTree.List[i]->val << " ";
     cout << endl;
     cout << "Min " << binaryTree.MinNode() << endl;
-
     binaryTree.DeleteNode(7);
     binaryTree.InNode(true);
 }
