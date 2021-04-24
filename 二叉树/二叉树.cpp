@@ -71,7 +71,20 @@ public:
     int MaxNode() {
         return MaxNode(Node)->val;
     }
+    // 给定二叉树，先序和中序遍历结果，求出二叉树实际树结构
+    TreeNode* BuildTree(vector<int>& preorder, vector<int>& inorder) {
+        return BuildTree(preorder, inorder, 0, 0, inorder.size() - 1);
+    }
 
+    TreeNode* BuildTree(vector<int>& preorder, vector<int>& inorder, int root, int start, int end) {// 中序的start和end
+        if (start > end) return NULL;
+        TreeNode* tree = new TreeNode(preorder[root]);
+        int i = start;
+        while (i < end && preorder[root] != inorder[i]) i++;
+        tree->left = BuildTree(preorder, inorder, root + 1, start, i - 1);
+        tree->right = BuildTree(preorder, inorder, root + 1 + i - start, i + 1, end);
+        return tree;
+    }
     // 前序遍历，递归
     void PreNode(TreeNode* root, bool output = false) {
         if (root == nullptr)
@@ -83,7 +96,6 @@ public:
         PreNode(root->left, output);
         PreNode(root->right, output);
     }
-
     // 中序遍历，递归
     void InNode(TreeNode* root, bool output = false) {
         if (root == nullptr)
@@ -95,7 +107,6 @@ public:
             List.push_back(root);
         InNode(root->right, output);
     }
-
     // 后序遍历，递归
     void PostNode(TreeNode* root, bool output = false) {
         if (root != nullptr) {
@@ -107,7 +118,6 @@ public:
                 List.push_back(root);
         }
     }
-
     // 先序插入二叉树
     void PreInsertNode(TreeNode* &root, int data) {
         if (root == nullptr) {
